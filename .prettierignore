@@ -6,3 +6,4 @@ docs
 public
 CLAUDE.md
 lib/supabase/database.types.ts
+.claude

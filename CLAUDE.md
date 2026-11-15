@@ -50,6 +50,7 @@ npm run check         # lint + typecheck + format:check (작업 완료 전 실�
 ### 라우트
 
 - `app/auth/*`: login, sign-up, sign-up-success, forgot-password, update-password, error 페이지와 이메일 확인용 `confirm/route.ts`.
+- Google OAuth: `components/google-login-button.tsx`가 `signInWithOAuth`로 Google에 보내고, `app/auth/callback/route.ts`가 `code`를 `exchangeCodeForSession`으로 세션 쿠키로 교환한 뒤 `next`(상대 경로만 허용, 기본 `/protected`)로 이동시킨다. 이메일 확인(`confirm`, token_hash)과는 별개의 흐름이다. Google Cloud/Supabase 대시보드 설정이 필요하다.
 - `app/protected`: 로그인 후 영역(자체 `layout.tsx` 포함).
 - `app/instruments`: 비로그인으로 접근 가능한 Supabase 조회 예시(Suspense + 서버 컴포넌트).
 - `components/ui`: shadcn 컴포넌트. 새 컴포넌트는 shadcn CLI/MCP로 추가한다.
