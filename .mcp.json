@@ -24,7 +24,9 @@
     },
     "shrimp-task-manager": {
       "command": "node",
-      "args": ["/Users/hadongki/workspace/mcp-shrimp-task-manager/dist/index.js"],
+      "args": [
+        "/Users/hadongki/workspace/mcp-shrimp-task-manager/dist/index.js"
+      ],
       "env": {
         "DATA_DIR": "/Users/hadongki/workspace/courses/my-app/shrimp_data",
         "TEMPLATES_USE": "en",
