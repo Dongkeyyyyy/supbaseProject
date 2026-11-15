@@ -9,9 +9,21 @@ npm run dev     # 개발 서버
 npm run build   # 프로덕션 빌드
 npm run start   # 빌드 결과 실행
 npm run lint    # eslint .
+npm run lint:fix      # eslint . --fix
+npm run typecheck     # tsc --noEmit
+npm run format        # prettier --write .
+npm run format:check  # prettier --check .
+npm run check         # lint + typecheck + format:check (작업 완료 전 실행)
 ```
 
-테스트 러너는 설정되어 있지 않다. 타입 검사는 `npx tsc --noEmit`으로 한다.
+테스트 러너는 설정되어 있지 않다.
+
+### 코드 품질 도구
+
+- ESLint 9 flat config(`eslint.config.mjs`)에 `eslint-config-next`와 `eslint-config-prettier`를 쓴다. `.next`, `shrimp_data`, `database.types.ts`는 린트 대상에서 제외된다.
+- Prettier(`.prettierrc`)는 `prettier-plugin-tailwindcss`로 Tailwind 클래스를 정렬한다. `docs/`, `CLAUDE.md`는 포맷 대상이 아니다.
+- Husky pre-commit 훅이 `lint-staged`(staged 파일에 eslint --fix, prettier)와 `npm run typecheck`를 실행한다. 실패하면 커밋이 막히므로 `--no-verify`로 우회하지 않는다.
+- `.claude/settings.json`의 PostToolUse 훅이 Claude가 수정한 파일에 Prettier를 자동 적용하고, `.env*` 읽기/수정과 force push를 차단한다.
 
 ## 스택
 

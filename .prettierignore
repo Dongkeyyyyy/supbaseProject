@@ -1,0 +1,8 @@
+.next
+node_modules
+package-lock.json
+shrimp_data
+docs
+public
+CLAUDE.md
+lib/supabase/database.types.ts
