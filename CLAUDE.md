@@ -37,7 +37,7 @@ npm run check         # lint + typecheck + format:check (작업 완료 전 실�
 ### 세션 갱신과 접근 제어 (여러 파일에 걸침)
 
 - 루트 `proxy.ts`가 모든 요청(정적 파일·이미지 제외)에서 `lib/supabase/proxy.ts`의 `updateSession`을 호출한다. Next의 `middleware` 후속 파일 규칙인 `proxy.ts`를 쓰므로 `middleware.ts`를 만들지 않는다.
-- `updateSession`은 쿠키 기반 세션을 갱신하고 `supabase.auth.getClaims()`로 사용자를 확인한다. 비로그인 사용자는 `/`, `/login*`, `/auth*`, `/instruments*`를 제외한 모든 경로에서 `/auth/login`으로 리다이렉트된다. 공개 경로를 추가하려면 이 조건문을 수정한다.
+- `updateSession`은 쿠키 기반 세션을 갱신하고 `supabase.auth.getClaims()`로 사용자를 확인한다. 비로그인 사용자는 `/`, `/login*`, `/auth*`, `/instruments*`, Untangle 화면(`/worries`, `/todos`, `/archive`, `/dashboard`와 그 하위 경로)을 제외한 모든 경로에서 `/auth/login`으로 리다이렉트된다. Untangle 경로는 `lib/supabase/proxy.ts`의 `untangleRoutes` 배열과 `isUntangleRoute()`가 정확히 일치하거나 `/`로 이어지는 하위 경로만 허용한다(`/todosfoo`는 공개되지 않는다). 공개 경로를 추가하려면 이 조건문이나 배열을 수정한다.
 - `createServerClient`와 `getClaims()` 사이에는 코드를 넣지 않는다. 반환하는 `supabaseResponse`는 그대로 반환해야 한다. 어기면 사용자가 무작위로 로그아웃된다. 새 응답을 만들 때는 쿠키를 복사해야 한다.
 - `hasEnvVars`(`lib/utils.ts`)가 false이면 proxy가 인증 검사를 모두 건너뛴다. 환경 변수 누락 시 보호 경로가 열려 보이는 원인이 된다.
 
@@ -53,6 +53,8 @@ npm run check         # lint + typecheck + format:check (작업 완료 전 실�
 - Google OAuth: `components/google-login-button.tsx`가 `signInWithOAuth`로 Google에 보내고, `app/auth/callback/route.ts`가 `code`를 `exchangeCodeForSession`으로 세션 쿠키로 교환한 뒤 `next`(상대 경로만 허용, 기본 `/protected`)로 이동시킨다. 이메일 확인(`confirm`, token_hash)과는 별개의 흐름이다. Google Cloud/Supabase 대시보드 설정이 필요하다.
 - `app/protected`: 로그인 후 영역(자체 `layout.tsx` 포함).
 - `app/instruments`: 비로그인으로 접근 가능한 Supabase 조회 예시(Suspense + 서버 컴포넌트).
+- `app/(untangle)`: Untangle(가칭) 5개 화면. `/`(브레인 덤프, 스타터 홈을 대체), `/worries`, `/todos`, `/archive`, `/dashboard`. 라우트 그룹이라 URL에는 나타나지 않고, 로그인 없이 열리며, 공통 레이아웃(`layout.tsx`)이 최대 430px 모바일 너비 컬럼과 하단 탭 바(`components/main-nav.tsx`)를 제공한다. 화면은 모두 클라이언트 컴포넌트다.
+- `lib/types.ts`: 항목(`Item`) 타입과 한국어 라벨. `lib/items.ts`: 항목 데이터 접근(`getItems()` 등). 지금은 더미 데이터이며 localStorage 저장소로 바꿀 예정이다(로드맵 Task 005).
 - `components/ui`: shadcn 컴포넌트. 새 컴포넌트는 shadcn CLI/MCP로 추가한다.
 
 ## 환경 변수
