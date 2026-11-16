@@ -2,6 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
 
+// 로그인 없이 열 수 있는 Untangle 화면 경로 ("/"는 별도로 공개)
+const untangleRoutes = ["/worries", "/todos", "/archive", "/dashboard"];
+
+// 경로가 Untangle 화면인지 확인한다.
+// "/todosfoo"처럼 이름만 비슷한 경로가 공개되지 않도록, 정확히 같거나 "/"로 이어지는 하위 경로만 허용한다.
+function isUntangleRoute(pathname: string) {
+  return untangleRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -53,7 +64,9 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     request.nextUrl.pathname !== "/instruments" &&
-    !request.nextUrl.pathname.startsWith("/instruments/")
+    !request.nextUrl.pathname.startsWith("/instruments/") &&
+    // Untangle 화면은 로그인 없이 열 수 있다 ("/"는 위에서 이미 제외)
+    !isUntangleRoute(request.nextUrl.pathname)
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
